@@ -1,0 +1,6 @@
+[submodule "yobot"]
+	path = yobot
+	url = https://github.com/yuudi/yobot.git
+[submodule "plugins/yobot"]
+	path = plugins/yobot
+	url = https://github.com/yuudi/yobot.git
