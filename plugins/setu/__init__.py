@@ -8,12 +8,24 @@ from nonebot import message
 from nonebot import get_bot
 from nonebot import log
 from .get_setu import *
+is_open = False
+@on_command('开启色图', aliases=('开启涩图'), only_to_me = False, permission = perm.SUPERUSER)
+async def open_setu(session)
+    if session.current_arg == '':
+        is_open = True
+        await session(message.MessageSegment.text('涩图已开启'))
+@on_command('关闭色图', aliases=('关闭涩图'), only_to_me = False, permission = perm.SUPERUSER)
+async def open_setu(session)
+    if session.current_arg == '':
+        is_open = False
+        await session(message.MessageSegment.text('涩图已关闭'))
+
 @on_command('色图', aliases=('涩图'), only_to_me = False)
 async def setu(session: CommandSession):
     bot = get_bot()
     if session.current_arg == '':
         has_perm = await perm.check_permission(session.bot, session.event, perm.GROUP)
-        if has_perm:
+        if has_perm and is_open:
             # msg1 = message.MessageSegment.image('https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1592212494831&di=ee6127d25949ab52d82402d2309a8537&imgtype=0&src=http%3A%2F%2Fb.hiphotos.baidu.com%2Fzhidao%2Fwh%253D450%252C600%2Fsign%3D14f304ca50da81cb4eb38bc96756fc20%2Fae51f3deb48f8c542d7329113b292df5e0fe7f68.jpg')
             Flag = await can_get_a_setu(session.event.user_id)
             if not Flag:

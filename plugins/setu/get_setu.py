@@ -8,7 +8,7 @@ setu_list = listdir(setu_path)
 last_visit = {}
 async def can_get_a_setu(user_id: int) -> bool:
     current_time = datetime.datetime.now()
-    delta = datetime.timedelta(minutes=5)
+    delta = datetime.timedelta(minutes=2)
     
     if user_id in last_visit:
         if last_visit[user_id] + delta > current_time:
