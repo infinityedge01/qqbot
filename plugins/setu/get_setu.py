@@ -1,4 +1,4 @@
-from os import path, listdir
+from os import path, listdir, system
 import datetime
 import random
 from nonebot import message
@@ -14,6 +14,7 @@ async def get_a_setu(user_id: int) -> message.MessageSegment:
         if last_visit[user_id] + delta > current_time:
             return message.MessageSegment.text('你看太多涩图了')
     last_visit[user_id] = current_time + delta
-    cur_setu_path = path.join(setu_path, random.choice(setu_list))
-    log.logger.debug('file://' + cur_setu_path)
-    return message.MessageSegment.image('file://' + cur_setu_path)
+    setu_file = random.choice(setu_list)
+    cur_setu_path = path.join(setu_path, setu_file)
+    system('cp -f %s %s' % (cur_setu_path, 'root/nonebot/coolq/data/image'))
+    return message.MessageSegment.image(setu_file)
