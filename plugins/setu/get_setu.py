@@ -2,6 +2,7 @@ from os import path, listdir
 import datetime
 import random
 from nonebot import message
+from nonebot import log
 setu_path = '/root/data/setu'
 setu_list = listdir(setu_path)
 last_visit = {}
@@ -14,4 +15,5 @@ async def get_a_setu(user_id: int) -> message.MessageSegment:
             return message.MessageSegment.text('你看太多涩图了')
     last_visit[user_id] = current_time + delta
     cur_setu_path = path.join(setu_path, random.choice(setu_list))
+    log.logger.debug(cur_setu_path)
     return message.MessageSegment.image(cur_setu_path)
