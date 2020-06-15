@@ -16,5 +16,6 @@ async def get_a_setu(user_id: int) -> message.MessageSegment:
     last_visit[user_id] = current_time + delta
     setu_file = random.choice(setu_list)
     cur_setu_path = path.join(setu_path, setu_file)
-    system('cp -f %s %s' % (cur_setu_path, 'root/nonebot/coolq/data/image'))
+    log.logger.debug(cur_setu_path)
+    system('cp -f %s %s' % (cur_setu_path, path.join('root/nonebot/coolq/data/image', setu_file)))
     return message.MessageSegment.image(setu_file)
