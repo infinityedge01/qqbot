@@ -7,8 +7,7 @@ from nonebot import on_command, CommandSession, scheduler
 from nonebot import message
 from nonebot import get_bot
 from nonebot import log
-
-import get_setu
+from .get_setu import *
 @on_command('色图', aliases=('涩图'), only_to_me = False)
 async def setu(session: CommandSession):
     bot = get_bot()
@@ -16,7 +15,7 @@ async def setu(session: CommandSession):
         has_perm = await perm.check_permission(session.bot, session.event, perm.SUPERUSER)
         if has_perm:
             # msg1 = message.MessageSegment.image('https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1592212494831&di=ee6127d25949ab52d82402d2309a8537&imgtype=0&src=http%3A%2F%2Fb.hiphotos.baidu.com%2Fzhidao%2Fwh%253D450%252C600%2Fsign%3D14f304ca50da81cb4eb38bc96756fc20%2Fae51f3deb48f8c542d7329113b292df5e0fe7f68.jpg')
-            msg1 = get_setu.get_a_setu(session.event.user_id)
+            msg1 = get_a_setu(session.event.user_id)
             msg_data = await session.send(msg1)
             log.logger.debug(str(msg_data['message_id']))
             # 制作一个“10秒钟后”触发器
