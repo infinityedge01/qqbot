@@ -10,12 +10,12 @@ from nonebot import log
 from .get_setu import *
 is_open = False
 @on_command('开启色图', aliases=('开启涩图'), only_to_me = False, permission = perm.SUPERUSER)
-async def open_setu(session)
+async def open_setu(session):
     if session.current_arg == '':
         is_open = True
         await session(message.MessageSegment.text('涩图已开启'))
 @on_command('关闭色图', aliases=('关闭涩图'), only_to_me = False, permission = perm.SUPERUSER)
-async def open_setu(session)
+async def open_setu(session):
     if session.current_arg == '':
         is_open = False
         await session(message.MessageSegment.text('涩图已关闭'))
