@@ -15,12 +15,14 @@ async def setu(session: CommandSession):
         has_perm = await perm.check_permission(session.bot, session.event, perm.GROUP)
         if has_perm:
             # msg1 = message.MessageSegment.image('https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1592212494831&di=ee6127d25949ab52d82402d2309a8537&imgtype=0&src=http%3A%2F%2Fb.hiphotos.baidu.com%2Fzhidao%2Fwh%253D450%252C600%2Fsign%3D14f304ca50da81cb4eb38bc96756fc20%2Fae51f3deb48f8c542d7329113b292df5e0fe7f68.jpg')
-            msg1 = await get_a_setu(session.event.user_id)
+            Flag = await can_get_a_setu(session.event.user_id)
+            if not Flag:
+                await session.send(message.MessageSegment.text('你看太多涩图了'))
+                return
+            msg1 = await get_a_setu()
             msg_data = await session.send(msg1)
             log.logger.debug(str(msg_data['message_id']))
             # 制作一个“10秒钟后”触发器
-            if(msg1 == message.MessageSegment('你看太多涩图了')):
-                return
             delta = datetime.timedelta(seconds=10)
             trigger = DateTrigger(
                 run_date=datetime.datetime.now() + delta
