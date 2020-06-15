@@ -16,4 +16,4 @@ async def get_a_setu(user_id: int) -> message.MessageSegment:
     last_visit[user_id] = current_time + delta
     cur_setu_path = path.join(setu_path, random.choice(setu_list))
     log.logger.debug(cur_setu_path)
-    return message.MessageSegment.image('file//' + cur_setu_path)
+    return message.MessageSegment.image('file://' + cur_setu_path)
