@@ -13,12 +13,12 @@ is_open = False
 async def open_setu(session):
     if session.current_arg == '':
         is_open = True
-        await session(message.MessageSegment.text('涩图已开启'))
+        await session.send(message.MessageSegment.text('涩图已开启'))
 @on_command('关闭色图', aliases=('关闭涩图'), only_to_me = False, permission = perm.SUPERUSER)
 async def open_setu(session):
     if session.current_arg == '':
         is_open = False
-        await session(message.MessageSegment.text('涩图已关闭'))
+        await session.send(message.MessageSegment.text('涩图已关闭'))
 
 @on_command('色图', aliases=('涩图'), only_to_me = False)
 async def setu(session: CommandSession):
