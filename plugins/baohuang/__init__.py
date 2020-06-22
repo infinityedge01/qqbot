@@ -280,6 +280,7 @@ async def game_end():
     for i in range(5): 
         msg1 = msg1 + message.MessageSegment.text('\n%d号位：[%s]' % (i + 1, get_string_identity(table.players[table.player_id[i]].get_open_identity()))) + message.MessageSegment.at(table.player_id[i]) + message.MessageSegment.text('位次[%s]，得分：%d 点' % (ke_to_str(table.players[table.player_id[i]].get_order()), table.players[table.player_id[i]].point))
         db.add_point(table.player_id[i], table.players[table.player_id[i]].point)
+    table = None
     await bot.send_group_msg(group_id = table.group_id, message = msg1)
 
 @on_command('出', only_to_me = False, permission = perm.GROUP)
