@@ -19,6 +19,7 @@ buqiang = []
 basepoint = 500
 @on_command('开启保皇', only_to_me = False, permission = perm.SUPERUSER)
 async def open_baohuang(session):
+    log.logger.debug(str(session.event.sub_type))
     if session.current_arg == '' and session.event.sub_type == 'group':
         global is_baohuang_open
         is_baohuang_open.add(session.event.group_id)
