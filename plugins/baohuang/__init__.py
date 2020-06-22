@@ -345,7 +345,7 @@ async def guopai(session):
 @on_command('保皇状态', only_to_me = False, permission = perm.GROUP)
 async def zhuangtai(session):
     global table
-    if session.current_arg == '' and session.event.group_id in is_baohuang_open and table != None:
+    if session.current_arg == '' and session.event.group_id in is_baohuang_open:
         if table != None:
             msg1 = message.MessageSegment.text('保皇已开始')
             for i in range(5): 
