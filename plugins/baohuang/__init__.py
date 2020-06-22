@@ -19,8 +19,7 @@ buqiang = []
 basepoint = 500
 @on_command('开启保皇', only_to_me = False, permission = perm.SUPERUSER)
 async def open_baohuang(session):
-    log.logger.debug(str(session.event.sub_type))
-    if session.current_arg == '' and session.event.sub_type == 'group':
+    if session.current_arg == '' and session.event.message_type == 'group':
         global is_baohuang_open
         is_baohuang_open.add(session.event.group_id)
         log.logger.debug(str(is_baohuang_open))
@@ -28,7 +27,7 @@ async def open_baohuang(session):
 
 @on_command('关闭保皇', only_to_me = False, permission = perm.SUPERUSER)
 async def close_baohuang(session):
-    if session.current_arg == '' and session.event.sub_type == 'group':
+    if session.current_arg == '' and session.event.message_type == 'group':
         global is_baohuang_open
         is_baohuang_open.remove(session.event.group_id)
         await session.send(message.MessageSegment.text('保皇功能已关闭'))
