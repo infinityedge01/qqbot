@@ -342,6 +342,19 @@ async def guopai(session):
         table.current_discard = nxtid
         await session.send(msg1)
 
+@on_command('保皇状态', only_to_me = False, permission = perm.GROUP)
+async def zhuangtai(session):
+    global table
+    if session.current_arg == '' and session.event.group_id in is_baohuang_open and table != None:
+        if table != None:
+            msg1 = message.MessageSegment.text('保皇已开始')
+            for i in range(5): 
+                msg1 = msg1 + message.MessageSegment.text('\n%d号位：[%s]' % (i + 1, get_string_identity(table.players[table.player_id[i]].get_open_identity()))) + message.MessageSegment.at(table.player_id[i])
+        else:
+            msg1 = message.MessageSegment.text('保皇未开始，当前桌上有%d人' % (len(on_table)))
+            for qqid in on_table:
+                msg1 = msg1 + message.MessageSegment.text('\n') +  message.MessageSegment.at(qqid)
+        await session.send(msg1)
 
         
         
