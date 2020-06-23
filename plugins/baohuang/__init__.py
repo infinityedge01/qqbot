@@ -32,6 +32,15 @@ async def close_baohuang(session):
         is_baohuang_open.remove(session.event.group_id)
         await session.send(message.MessageSegment.text('保皇功能已关闭'))
 
+@on_command('重置保皇', only_to_me = False, permission = perm.SUPERUSER)
+async def restart_baohuang(session):
+    if session.current_arg == '' and session.event.detail_type == 'group':
+        global is_baohuang_open, on_table, buqiang, table
+        on_table = []
+        buqiang = []
+        table = None
+        await session.send(message.MessageSegment.text('保皇功能已重置'))
+
 @on_request('friend')
 async def auto_add_friend(session: RequestSession):
     await session.approve()
@@ -136,6 +145,10 @@ async def start_game(session):
         msg1 = message.MessageSegment.text('游戏开始')
         for i in range(5): 
             msg1 = msg1 + message.MessageSegment.text('\n[%s]' % (get_string_identity(table.players[table.player_id[i]].get_open_identity()))) + message.MessageSegment.at(table.player_id[i])
+        log.logger.debug(str(table.player_id))
+        for i in range(5):
+            log.logger.debug(str(tile_dict_to_string(table.players[table.player_id[i]].tiles)))
+            
         await session.send(msg1)
         table.qiangdu_begin()
         buqiang = []
