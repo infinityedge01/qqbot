@@ -282,7 +282,7 @@ async def anbao(session):
             return
         table.anbao()
         table.game_begin()
-        msg1 = message.MessageSegment.at(qqid) + message.MessageSegment.text('暗保，游戏开始！')
+        msg1 = message.MessageSegment.text('保子选择了暗保，游戏开始！')
         for i in range(5): 
             msg1 = msg1 + message.MessageSegment.text('\n%d号位：[%s]' % (i + 1, get_string_identity(table.players[table.player_id[i]].get_open_identity()))) + message.MessageSegment.at(table.player_id[i])
         msg1 = msg1 + message.MessageSegment.text('\n[%s]' % (get_string_identity(table.players[table.huangdi_id].get_open_identity()))) + message.MessageSegment.at(table.huangdi_id) + message.MessageSegment.text('请出牌')
