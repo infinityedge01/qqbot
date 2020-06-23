@@ -74,37 +74,55 @@ async def add_points(session):
 
 @on_command('加入游戏', aliases=('上桌'), only_to_me = False, permission = perm.GROUP)
 async def join_game(session):
+    global on_table, table, db
+    qqid = int(session.event['user_id'])
     if session.current_arg == '' and session.event.group_id in is_baohuang_open:
-        global on_table, table, db
-        qqid = session.event['user_id']
-        if db.get_point(qqid) <= 0:
-            await session.send(message.MessageSegment.at(qqid) + message.MessageSegment.text('没积分了你'))
+        pass
+    else:
+        has_perm = await perm.check_permission(session.bot, session.event, perm.SUPERUSER)
+        if not has_perm:
             return
-        if table != None:
-            await session.send(message.MessageSegment.at(qqid) + message.MessageSegment.text('游戏已开始不能加入'))
+        match = re.match(r'^\[CQ:at,qq=(\d+)\]', session.current_arg)
+        if not match:
             return
-        if qqid in on_table:
-            await session.send(message.MessageSegment.at(qqid) + message.MessageSegment.text('已经加入游戏'))
-            return
-        if len(on_table) == 5:
-            await session.send(message.MessageSegment.at(qqid) + message.MessageSegment.text('人数已满'))
-            return
-        on_table.append(qqid)
-        await session.send(message.MessageSegment.at(qqid) + message.MessageSegment.text('加入成功，当前玩家 %d 个' % (len(on_table))))
+        qqid = int(match.group(1))
+    if db.get_point(qqid) <= 0:
+        await session.send(message.MessageSegment.at(qqid) + message.MessageSegment.text('没积分了你'))
+        return
+    if table != None:
+        await session.send(message.MessageSegment.at(qqid) + message.MessageSegment.text('游戏已开始不能加入'))
+        return
+    if qqid in on_table:
+        await session.send(message.MessageSegment.at(qqid) + message.MessageSegment.text('已经加入游戏'))
+        return
+    if len(on_table) == 5:
+        await session.send(message.MessageSegment.at(qqid) + message.MessageSegment.text('人数已满'))
+        return
+    on_table.append(qqid)
+    await session.send(message.MessageSegment.at(qqid) + message.MessageSegment.text('加入成功，当前玩家 %d 个' % (len(on_table))))
 
 @on_command('退出游戏', aliases=('下桌'), only_to_me = False, permission = perm.GROUP)
 async def exit_game(session):
+    global on_table, table
+    qqid = int(session.event['user_id'])
     if session.current_arg == '' and session.event.group_id in is_baohuang_open:
-        global on_table, table
-        qqid = session.event['user_id']
-        if not qqid in on_table:
-            await session.send(message.MessageSegment.at(qqid) + message.MessageSegment.text('未加入游戏，不能退出'))
+        pass
+    else:
+        has_perm = await perm.check_permission(session.bot, session.event, perm.SUPERUSER)
+        if not has_perm:
             return
-        if table != None:
-            await session.send(message.MessageSegment.at(qqid) + message.MessageSegment.text('游戏已开始不能退出'))
+        match = re.match(r'^\[CQ:at,qq=(\d+)\]', session.current_arg)
+        if not match:
             return
-        on_table.remove(qqid)
-        await session.send(message.MessageSegment.at(qqid) + message.MessageSegment.text('退出成功，当前玩家 %d 个' % (len(on_table))))
+        qqid = int(match.group(1))
+    if not qqid in on_table:
+        await session.send(message.MessageSegment.at(qqid) + message.MessageSegment.text('未加入游戏，不能退出'))
+        return
+    if table != None:
+        await session.send(message.MessageSegment.at(qqid) + message.MessageSegment.text('游戏已开始不能退出'))
+        return
+    on_table.remove(qqid)
+    await session.send(message.MessageSegment.at(qqid) + message.MessageSegment.text('退出成功，当前玩家 %d 个' % (len(on_table))))
 
 def get_string_identity(identity: int) -> str:
     if identity == HUANGDI : return '皇帝'
@@ -131,7 +149,7 @@ def tile_list_to_string(tiles: list) -> str:
 async def start_game(session):
     global on_table, table, buqiang
     if session.current_arg == '' and session.event.group_id in is_baohuang_open:
-        qqid = session.event['user_id']
+        qqid = int(session.event['user_id'])
         if table != None:
             await session.send(message.MessageSegment.at(qqid) + message.MessageSegment.text('游戏已经开始'))
             return
@@ -162,7 +180,7 @@ async def start_game(session):
 async def qiangdu(session):
     global on_table, table, buqiang
     if session.current_arg == '' and session.event.group_id in is_baohuang_open and table != None:
-        qqid = session.event['user_id']
+        qqid = int(session.event['user_id'])
         if table.game_period != 1: return
         if not qqid in table.player_id: return
         if qqid in buqiang: 
@@ -184,7 +202,7 @@ async def qiangdu(session):
 async def not_qiangdu(session):
     global on_table, table, buqiang
     if session.current_arg == '' and session.event.group_id in is_baohuang_open and table != None:
-        qqid = session.event['user_id']
+        qqid = int(session.event['user_id'])
         if table.game_period != 1: return
         if not qqid in table.player_id: return
         if qqid in buqiang: 
@@ -201,7 +219,7 @@ async def not_qiangdu(session):
 async def dengji(session):
     global table
     if session.current_arg == '' and session.event.group_id in is_baohuang_open and table != None:
-        qqid = session.event['user_id']
+        qqid = int(session.event['user_id'])
         if table.game_period != 2: return
         if not qqid in table.player_id: return
         if qqid != table.huangdi_id: 
@@ -215,7 +233,7 @@ async def dengji(session):
 async def rangwei(session):
     global table
     if session.current_arg == '' and session.event.group_id in is_baohuang_open and table != None:
-        qqid = session.event['user_id']
+        qqid = int(session.event['user_id'])
         if table.game_period != 2: return
         if not qqid in table.player_id: return
         if qqid != table.huangdi_id: 
@@ -233,7 +251,7 @@ async def rangwei(session):
 async def mingbao(session):
     global table
     if session.current_arg == '' and table != None:
-        qqid = session.event['user_id']
+        qqid = int(session.event['user_id'])
         if table.game_period != 3: return
         if not qqid in table.player_id: return
         if qqid != table.baozi_id: 
@@ -251,7 +269,7 @@ async def mingbao(session):
 async def anbao(session):
     global table
     if session.current_arg == '' and table != None:
-        qqid = session.event['user_id']
+        qqid = int(session.event['user_id'])
         if table.game_period != 3: return
         if not qqid in table.player_id: return
         if qqid != table.baozi_id: 
@@ -270,7 +288,7 @@ async def anbao(session):
 async def wodeshoupai(session):
     global table
     if session.current_arg== '' and table != None:
-        qqid = session.event['user_id']
+        qqid = int(session.event['user_id'])
         log.logger.debug(str((table.player_id, qqid)))
         if not qqid in table.player_id:
             return
@@ -323,7 +341,7 @@ async def game_end():
 async def chupai(session):
     global table
     if session.event.group_id in is_baohuang_open and table != None:
-        qqid = session.event['user_id']
+        qqid = int(session.event['user_id'])
         if table.game_period != 5: return
         if qqid != table.current_discard: return
         tile_str = session.current_arg_text.strip()
@@ -365,7 +383,7 @@ async def chupai(session):
 async def guopai(session):
     global table
     if session.current_arg == '' and session.event.group_id in is_baohuang_open and table != None:
-        qqid = session.event['user_id']
+        qqid = int(session.event['user_id'])
         if table.game_period != 5: return
         if qqid != table.current_discard: return
         is_success = table.pass_tile()
