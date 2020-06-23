@@ -165,16 +165,14 @@ async def start_game(session):
             msg1 = msg1 + message.MessageSegment.text('\n[%s]' % (get_string_identity(table.players[table.player_id[i]].get_open_identity()))) + message.MessageSegment.at(table.player_id[i])
         log.logger.debug(str(table.player_id))
         for i in range(5):
-            log.logger.debug(str(tile_dict_to_string(table.players[table.player_id[i]].tiles)))
+            log.logger.debug(str(table.players[table.player_id[i]].tiles))
             
         await session.send(msg1)
         table.qiangdu_begin()
         buqiang = []
         await session.send(message.MessageSegment.text('现在是抢独阶段，如需独保请在群聊中发送「抢独」，否则发送「不抢」'))
-        loop = asyncio.get_event_loop()
-        tasks = [bot.send_private_msg(user_id = table.player_id[i], message = message.MessageSegment.text(tile_dict_to_string(table.players[table.player_id[i]].tiles))) for i in range(5)]
-        loop.run_until_complete(asyncio.wait(tasks))
-        loop.close()
+        for i in range(5):
+            bot.send_private_msg(user_id = table.player_id[i], message = message.MessageSegment.text(tile_dict_to_string(table.players[table.player_id[i]].tiles)))
 
 @on_command('抢独', only_to_me = False, permission = perm.GROUP)
 async def qiangdu(session):
@@ -193,10 +191,8 @@ async def qiangdu(session):
             msg1 = msg1 + message.MessageSegment.text('\n%d号位：[%s]' % (i + 1, get_string_identity(table.players[table.player_id[i]].get_open_identity()))) + message.MessageSegment.at(table.player_id[i])
         msg1 = msg1 + message.MessageSegment.text('\n[独保]') + message.MessageSegment.at(qqid) + message.MessageSegment.text('请出牌')
         await session.send(msg1)
-        loop = asyncio.get_event_loop()
-        tasks = [bot.send_private_msg(user_id = table.player_id[i], message = message.MessageSegment.text(tile_dict_to_string(table.players[table.player_id[i]].tiles))) for i in range(5)]
-        loop.run_until_complete(asyncio.wait(tasks))
-        loop.close()
+        for i in range(5):
+            bot.send_private_msg(user_id = table.player_id[i], message = message.MessageSegment.text(tile_dict_to_string(table.players[table.player_id[i]].tiles)))
 
 @on_command('不抢', only_to_me = False, permission = perm.GROUP)
 async def not_qiangdu(session):
