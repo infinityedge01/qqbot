@@ -258,6 +258,7 @@ async def wodeshoupai(session):
     global table
     if session.current_arg== '' and table != None:
         qqid = session.event['user_id']
+        log.logger.debug(str((table.player_id, qqid)))
         if not qqid in table.player_id:
             return
     await session.send(message.MessageSegment.text(tile_dict_to_string(table.players[qqid].tiles)))
@@ -342,7 +343,7 @@ async def chupai(session):
         else:
             if table.players[qqid].get_tile_count() <= 10:
                 msg1 = msg1 + message.MessageSegment.text('%d号位：[%s]' % (table.players[qqid].table_id + 1, get_string_identity(table.players[qqid].get_open_identity()))) + message.MessageSegment.at(qqid) + message.MessageSegment.text('还剩下%d张牌\n' % (table.players[qqid].get_tile_count()))
-        msg1 = msg1 + message.MessageSegment.text('%d号位：[%s]' % (table.players[nxtid].table_id + 1, get_string_identity(table.players[nxtid].get_open_identity()))) + message.MessageSegment.at(qqid) + message.MessageSegment.text('请出牌')
+        msg1 = msg1 + message.MessageSegment.text('%d号位：[%s]' % (table.players[nxtid].table_id + 1, get_string_identity(table.players[nxtid].get_open_identity()))) + message.MessageSegment.at(nxtid) + message.MessageSegment.text('请出牌')
         table.current_discard = nxtid
         await session.send(msg1)
         await bot.send_private_msg(user_id = qqid, message = message.MessageSegment.text(tile_dict_to_string(table.players[qqid].tiles)))
@@ -360,7 +361,7 @@ async def guopai(session):
         nxtid = table.get_next_player()
         msg1 = message.MessageSegment.text('最近一次出牌：%d号位：[%s]' % (table.players[table.last_discard].table_id + 1, get_string_identity(table.players[table.last_discard].get_open_identity()))) + message.MessageSegment.at(table.last_discard) + message.MessageSegment.text('出牌：%s\n' % (tile_list_to_string(table.last_tile))) 
         msg1 = msg1 + message.MessageSegment.text('上回合：%d号位：[%s]' % (table.players[qqid].table_id + 1, get_string_identity(table.players[qqid].get_open_identity()))) + message.MessageSegment.at(qqid) + message.MessageSegment.text('过牌：%s\n' % (tile_list_to_string(is_success[1]))) 
-        msg1 = msg1 + message.MessageSegment.text('%d号位：[%s]' % (table.players[nxtid].table_id + 1, get_string_identity(table.players[nxtid].get_open_identity()))) + message.MessageSegment.at(qqid) + message.MessageSegment.text('请出牌')
+        msg1 = msg1 + message.MessageSegment.text('%d号位：[%s]' % (table.players[nxtid].table_id + 1, get_string_identity(table.players[nxtid].get_open_identity()))) + message.MessageSegment.at(nxtid) + message.MessageSegment.text('请出牌')
         table.current_discard = nxtid
         await session.send(msg1)
 
