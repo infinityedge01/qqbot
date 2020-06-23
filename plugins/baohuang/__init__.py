@@ -419,8 +419,3 @@ async def zhuangtai(session):
             for qqid in on_table:
                 msg1 = msg1 + message.MessageSegment.text('\n') +  message.MessageSegment.at(qqid)
         await session.send(msg1)
-
-        
-        
-        
-        
