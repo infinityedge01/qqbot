@@ -4,7 +4,7 @@ import datetime
 import re
 from apscheduler.triggers.date import DateTrigger # 一次性触发器
 from nonebot import permission as perm
-from nonebot import on_command, CommandSession, scheduler
+from nonebot import on_command, on_request, CommandSession, scheduler
 from nonebot import message
 from nonebot import get_bot
 from nonebot import log
@@ -31,6 +31,10 @@ async def close_baohuang(session):
         global is_baohuang_open
         is_baohuang_open.remove(session.event.group_id)
         await session.send(message.MessageSegment.text('保皇功能已关闭'))
+
+@on_request('friend')
+async def _(session: RequestSession):
+    await session.approve()
 
 @on_command('获取积分', only_to_me = False, permission = perm.GROUP)
 async def get_free_points(session):
@@ -247,6 +251,17 @@ async def anbao(session):
             msg1 = msg1 + message.MessageSegment.text('\n%d号位：[%s]' % (i + 1, get_string_identity(table.players[table.player_id[i]].get_open_identity()))) + message.MessageSegment.at(table.player_id[i])
         msg1 = msg1 + message.MessageSegment.text('\n[%s]' % (get_string_identity(table.players[table.huangdi_id].get_open_identity()))) + message.MessageSegment.at(table.huangdi_id) + message.MessageSegment.text('请出牌')
         await bot.send_group_msg(group_id = table.group_id, message = msg1)
+
+
+@on_command('我的手牌', only_to_me = False, permission = perm.EVERYBODY)
+async def wodeshoupai(session):
+    global table
+    if session.current_arg== '' and table != None:
+        qqid = session.event['user_id']
+        if not qqid in table.player_id:
+            return
+    await session.send(message.MessageSegment.text(tile_dict_to_string(table.players[qqid].tiles)))
+
 
 def ke_to_str(ke:int) -> str:
     if ke == 1: return '头科'
