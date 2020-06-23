@@ -134,8 +134,10 @@ def get_string_identity(identity: int) -> str:
 
 def tile_dict_to_string(tiles: dict) -> str:
     ret = ""
+    log.logger.debug(str(tiles))
     for tile in reversed_tile_list:
         ret = ret + ("[%s]" % (tile)) * tiles[tile]
+    log.logger.debug(ret)
     return ret
 
 def tile_list_to_string(tiles: list) -> str:
