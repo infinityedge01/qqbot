@@ -1,1 +1,3 @@
 plugins/baohuang/*.db
+*.db
+*.db-*
