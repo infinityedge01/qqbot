@@ -62,8 +62,11 @@ async def add_points(session):
 @on_command('加入游戏', aliases=('上桌'), only_to_me = False, permission = perm.GROUP)
 async def join_game(session):
     if session.current_arg == '' and session.event.group_id in is_baohuang_open:
-        global on_table, table
+        global on_table, table, db
         qqid = session.event['user_id']
+        if db.get_point(qqid) <= 0:
+            await session.send(message.MessageSegment.at(qqid) + message.MessageSegment.text('没积分了你'))
+            return
         if table != None:
             await session.send(message.MessageSegment.at(qqid) + message.MessageSegment.text('游戏已开始不能加入'))
             return
@@ -130,11 +133,13 @@ async def start_game(session):
         for i in range(5): 
             msg1 = msg1 + message.MessageSegment.text('\n[%s]' % (get_string_identity(table.players[table.player_id[i]].get_open_identity()))) + message.MessageSegment.at(table.player_id[i])
         await session.send(msg1)
-        for i in range(5): 
-            await bot.send_private_msg(user_id = table.player_id[i], message = message.MessageSegment.text(tile_dict_to_string(table.players[table.player_id[i]].tiles)))
         table.qiangdu_begin()
         buqiang = []
         await session.send(message.MessageSegment.text('现在是抢独阶段，如需独保请在群聊中发送「抢独」，否则发送「不抢」'))
+        loop = asyncio.get_event_loop()
+        tasks = [bot.send_private_msg(user_id = table.player_id[i], message = message.MessageSegment.text(tile_dict_to_string(table.players[table.player_id[i]].tiles))) for i in range(5)]
+        loop.run_until_complete(asyncio.wait(tasks))
+        loop.close()
 
 @on_command('抢独', only_to_me = False, permission = perm.GROUP)
 async def qiangdu(session):
@@ -153,8 +158,10 @@ async def qiangdu(session):
             msg1 = msg1 + message.MessageSegment.text('\n%d号位：[%s]' % (i + 1, get_string_identity(table.players[table.player_id[i]].get_open_identity()))) + message.MessageSegment.at(table.player_id[i])
         msg1 = msg1 + message.MessageSegment.text('\n[独保]') + message.MessageSegment.at(qqid) + message.MessageSegment.text('请出牌')
         await session.send(msg1)
-        for i in range(5): 
-            await bot.send_private_msg(user_id = table.player_id[i], message = message.MessageSegment.text(tile_dict_to_string(table.players[table.player_id[i]].tiles)))
+        loop = asyncio.get_event_loop()
+        tasks = [bot.send_private_msg(user_id = table.player_id[i], message = message.MessageSegment.text(tile_dict_to_string(table.players[table.player_id[i]].tiles))) for i in range(5)]
+        loop.run_until_complete(asyncio.wait(tasks))
+        loop.close()
 
 @on_command('不抢', only_to_me = False, permission = perm.GROUP)
 async def not_qiangdu(session):
@@ -320,10 +327,10 @@ async def chupai(session):
         else:
             if table.players[qqid].get_tile_count() <= 10:
                 msg1 = msg1 + message.MessageSegment.text('%d号位：[%s]' % (table.players[qqid].table_id + 1, get_string_identity(table.players[qqid].get_open_identity()))) + message.MessageSegment.at(qqid) + message.MessageSegment.text('还剩下%d张牌\n' % (table.players[qqid].get_tile_count()))
-                await bot.send_private_msg(user_id = qqid, message = message.MessageSegment.text(tile_dict_to_string(table.players[qqid].tiles)))
         msg1 = msg1 + message.MessageSegment.text('%d号位：[%s]' % (table.players[nxtid].table_id + 1, get_string_identity(table.players[nxtid].get_open_identity()))) + message.MessageSegment.at(qqid) + message.MessageSegment.text('请出牌')
         table.current_discard = nxtid
         await session.send(msg1)
+        await bot.send_private_msg(user_id = qqid, message = message.MessageSegment.text(tile_dict_to_string(table.players[qqid].tiles)))
 
 @on_command('过牌', aliases=('过', '要不起', 'pass'), only_to_me = False, permission = perm.GROUP)
 async def guopai(session):
