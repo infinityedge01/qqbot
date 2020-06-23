@@ -134,14 +134,15 @@ def get_string_identity(identity: int) -> str:
 
 def tile_dict_to_string(tiles: dict) -> str:
     ret = ""
+    log.logger.debug(str(tiles))
     for tile in reversed_tile_list:
-        ret = ret + ("[%s]" % (tile)) * tiles[tile]
+        ret = ret + tile * tiles[tile]
     return ret
 
 def tile_list_to_string(tiles: list) -> str:
     ret = ""
     for tile in tiles:
-        ret = ret + ("[%s]" % (tile))
+        ret = ret + tile
     return ret
 
 
@@ -172,7 +173,7 @@ async def start_game(session):
         buqiang = []
         await session.send(message.MessageSegment.text('现在是抢独阶段，如需独保请在群聊中发送「抢独」，否则发送「不抢」'))
         for i in range(5):
-            bot.send_private_msg(user_id = table.player_id[i], message = message.MessageSegment.text(tile_dict_to_string(table.players[table.player_id[i]].tiles)))
+            await bot.send_private_msg(user_id = table.player_id[i], message = message.MessageSegment.text(tile_dict_to_string(table.players[table.player_id[i]].tiles)))
 
 @on_command('抢独', only_to_me = False, permission = perm.GROUP)
 async def qiangdu(session):
@@ -192,7 +193,7 @@ async def qiangdu(session):
         msg1 = msg1 + message.MessageSegment.text('\n[独保]') + message.MessageSegment.at(qqid) + message.MessageSegment.text('请出牌')
         await session.send(msg1)
         for i in range(5):
-            bot.send_private_msg(user_id = table.player_id[i], message = message.MessageSegment.text(tile_dict_to_string(table.players[table.player_id[i]].tiles)))
+            await bot.send_private_msg(user_id = table.player_id[i], message = message.MessageSegment.text(tile_dict_to_string(table.players[table.player_id[i]].tiles)))
 
 @on_command('不抢', only_to_me = False, permission = perm.GROUP)
 async def not_qiangdu(session):

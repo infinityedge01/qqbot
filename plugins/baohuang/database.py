@@ -5,6 +5,7 @@ import pickle
 import sys
 class Database:
     def __init__(self, db_path):
+        self.db_path = db_path
         db_exists = os.path.exists(os.path.join(
             db_path, "baohuang.db"))
         db_conn = sqlite3.connect(os.path.join(
@@ -16,8 +17,12 @@ class Database:
                 qqid INT PRIMARY KEY,
                 points INT,
                 last_day CHARACTER(4))''')
-    
+        db_conn.commit()
+        db_conn.close()
     def get_free_points(self, qqid: int, daily_free: int) -> bool:
+        db_conn = sqlite3.connect(os.path.join(
+            self.db_path, "baohuang.db"))
+        self.db = db_conn.cursor()
         today = time.strftime("%m%d")
         sql_info = list(self.db.execute(
             "SELECT qqid, points, last_day FROM Data WHERE qqid=?", (qqid,)))
@@ -39,9 +44,14 @@ class Database:
         else:
             self.db.execute("INSERT INTO Data (qqid,points,last_day) VALUES(?,?,?)",
                        (qqid, points, last_day))
+        db_conn.commit()
+        db_conn.close()
         return flag
 
     def add_point(self, qqid: int, x: int) -> bool:
+        db_conn = sqlite3.connect(os.path.join(
+            self.db_path, "baohuang.db"))
+        self.db = db_conn.cursor()
         sql_info = list(self.db.execute(
             "SELECT qqid, points, last_day FROM Data WHERE qqid=?", (qqid,)))
         mem_exists = (len(sql_info) == 1)
@@ -59,8 +69,13 @@ class Database:
         else:
             self.db.execute("INSERT INTO Data (qqid,points,last_day) VALUES(?,?,?)",
                        (qqid, points, last_day))
+        db_conn.commit()
+        db_conn.close()
         return flag
     def change_point(self, qqid: int, x: int) -> bool:
+        db_conn = sqlite3.connect(os.path.join(
+            self.db_path, "baohuang.db"))
+        self.db = db_conn.cursor()
         sql_info = list(self.db.execute(
             "SELECT qqid, points, last_day FROM Data WHERE qqid=?", (qqid,)))
         mem_exists = (len(sql_info) == 1)
@@ -79,8 +94,13 @@ class Database:
         else:
             self.db.execute("INSERT INTO Data (qqid,points,last_day) VALUES(?,?,?)",
                        (qqid, points, last_day))
+        db_conn.commit()
+        db_conn.close()
         return flag
     def get_point(self, qqid: int) -> int:
+        db_conn = sqlite3.connect(os.path.join(
+            self.db_path, "baohuang.db"))
+        self.db = db_conn.cursor()
         sql_info = list(self.db.execute(
             "SELECT qqid, points, last_day FROM Data WHERE qqid=?", (qqid,)))
         mem_exists = (len(sql_info) == 1)
@@ -90,6 +110,8 @@ class Database:
             points, last_day = 0, ""
             self.db.execute("INSERT INTO Data (qqid,points,last_day) VALUES(?,?,?)",
                        (qqid, points, last_day))
+        db_conn.commit()
+        db_conn.close()
         return points
 
 #test = Database(sys.path[0])
