@@ -2,7 +2,7 @@ import os
 import asyncio
 import datetime
 import random
-
+import copy
 
 tile_list = ['3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K', 'A', '2', '鬼', '保', '王', '皇']
 reversed_tile_list = reversed(tile_list)
@@ -32,7 +32,7 @@ class Player:
 
 
     def get_tiles(self) -> dict:
-        return self.tiles 
+        return copy.deepcopy(self.tiles)
 
     def get_tile_count(self) -> int:
         ret = 0
