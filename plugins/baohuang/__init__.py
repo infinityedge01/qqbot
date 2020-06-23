@@ -174,7 +174,7 @@ async def start_game(session):
         for i in range(5):
             str1 = tile_dict_to_string(table.players[table.player_id[i]].get_tiles())
             log.logger.debug(str1)
-            await bot.send_private_msg(user_id = table.player_id[i], message = message.MessageSegment.text(str1))
+            await bot.send_private_msg(user_id = table.player_id[i], message = message.MessageSegment.text(str1), self_id = session.event.self_id)
 
 @on_command('抢独', only_to_me = False, permission = perm.GROUP)
 async def qiangdu(session):
@@ -196,7 +196,7 @@ async def qiangdu(session):
         for i in range(5):
             str1 = tile_dict_to_string(table.players[table.player_id[i]].get_tiles())
             log.logger.debug(str1)
-            await bot.send_private_msg(user_id = table.player_id[i], message = message.MessageSegment.text(str1))
+            await bot.send_private_msg(user_id = table.player_id[i], message = message.MessageSegment.text(str1), self_id = session.event.self_id)
 
 @on_command('不抢', only_to_me = False, permission = perm.GROUP)
 async def not_qiangdu(session):
@@ -248,8 +248,8 @@ async def rangwei(session):
         log.logger.debug(str1)
         str2 = tile_dict_to_string(table.players[table.huangdi_id].get_tiles())
         log.logger.debug(str2)
-        await bot.send_private_msg(user_id = qqid, message = message.MessageSegment.text(str1))
-        await bot.send_private_msg(user_id = table.huangdi_id, message = message.MessageSegment.text(str2))
+        await bot.send_private_msg(user_id = qqid, message = message.MessageSegment.text(str1), self_id = session.event.self_id)
+        await bot.send_private_msg(user_id = table.huangdi_id, message = message.MessageSegment.text(str2), self_id = session.event.self_id)
 
 @on_command('明保', only_to_me = False, permission = perm.PRIVATE)
 async def mingbao(session):
@@ -267,7 +267,7 @@ async def mingbao(session):
         for i in range(5): 
             msg1 = msg1 + message.MessageSegment.text('\n%d号位：[%s]' % (i + 1, get_string_identity(table.players[table.player_id[i]].get_open_identity()))) + message.MessageSegment.at(table.player_id[i])
         msg1 = msg1 + message.MessageSegment.text('\n[%s]' % (get_string_identity(table.players[table.huangdi_id].get_open_identity()))) + message.MessageSegment.at(table.huangdi_id) + message.MessageSegment.text('请出牌')
-        await bot.send_group_msg(group_id = table.group_id, message = msg1)
+        await bot.send_group_msg(group_id = table.group_id, message = msg1, self_id = session.event.self_id)
 
 @on_command('暗保', only_to_me = False, permission = perm.PRIVATE)
 async def anbao(session):
@@ -285,7 +285,7 @@ async def anbao(session):
         for i in range(5): 
             msg1 = msg1 + message.MessageSegment.text('\n%d号位：[%s]' % (i + 1, get_string_identity(table.players[table.player_id[i]].get_open_identity()))) + message.MessageSegment.at(table.player_id[i])
         msg1 = msg1 + message.MessageSegment.text('\n[%s]' % (get_string_identity(table.players[table.huangdi_id].get_open_identity()))) + message.MessageSegment.at(table.huangdi_id) + message.MessageSegment.text('请出牌')
-        await bot.send_group_msg(group_id = table.group_id, message = msg1)
+        await bot.send_group_msg(group_id = table.group_id, message = msg1, self_id = session.event.self_id)
 
 
 @on_command('我的手牌', only_to_me = False, permission = perm.EVERYBODY)
@@ -294,12 +294,12 @@ async def wodeshoupai(session):
     if session.current_arg== '' and table != None:
         qqid = int(session.event['user_id'])
         log.logger.debug(str((table.player_id, qqid)))
-        log.logger.debug(str(qqid in table.players_id))
+        log.logger.debug(str(qqid in table.player_id))
         if not qqid in table.player_id:
             return
-    str1 = tile_dict_to_string(table.players[qqid].get_tiles())
-    log.logger.debug(str1)
-    await session.send(message.MessageSegment.text(str1))
+        str1 = tile_dict_to_string(table.players[qqid].get_tiles())
+        log.logger.debug(str1)
+        await session.send(message.MessageSegment.text(str1))
 
 
 def ke_to_str(ke:int) -> str:
