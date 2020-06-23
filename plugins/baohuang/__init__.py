@@ -211,8 +211,7 @@ async def not_qiangdu(session):
             await session.send(message.MessageSegment.at(qqid) + message.MessageSegment.text('你已经不抢了'))
             return
         buqiang.append(qqid)
-        table.qiangdu(qqid)
-        session.send(message.MessageSegment.at(qqid) + message.MessageSegment.text('不抢'))
+        await session.send(message.MessageSegment.at(qqid) + message.MessageSegment.text('不抢'))
         if len(buqiang) == 5:
             table.dengji_begin()
             await session.send(message.MessageSegment.text('现在是登基阶段，当前皇帝是：') + message.MessageSegment.at(table.huangdi_id) + message.MessageSegment.text('\n如需登基请在群聊中发送「登基」，否则发送「让位」'))
@@ -402,7 +401,7 @@ async def guopai(session):
             await session.send(message.MessageSegment.text('你是第一手出牌，不能过牌'))
         nxtid = table.get_next_player()
         msg1 = message.MessageSegment.text('最近一次出牌：%d号位：[%s]' % (table.players[table.last_discard].table_id + 1, get_string_identity(table.players[table.last_discard].get_open_identity()))) + message.MessageSegment.at(table.last_discard) + message.MessageSegment.text('出牌：%s\n' % (tile_list_to_string(table.last_tile))) 
-        msg1 = msg1 + message.MessageSegment.text('上回合：%d号位：[%s]' % (table.players[qqid].table_id + 1, get_string_identity(table.players[qqid].get_open_identity()))) + message.MessageSegment.at(qqid) + message.MessageSegment.text('过牌：%s\n' % (tile_list_to_string(is_success[1]))) 
+        msg1 = msg1 + message.MessageSegment.text('上回合：%d号位：[%s]' % (table.players[qqid].table_id + 1, get_string_identity(table.players[qqid].get_open_identity()))) + message.MessageSegment.at(qqid) + message.MessageSegment.text('过牌：\n' )
         msg1 = msg1 + message.MessageSegment.text('%d号位：[%s]' % (table.players[nxtid].table_id + 1, get_string_identity(table.players[nxtid].get_open_identity()))) + message.MessageSegment.at(nxtid) + message.MessageSegment.text('请出牌')
         table.current_discard = nxtid
         await session.send(msg1)
