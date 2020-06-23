@@ -172,7 +172,9 @@ async def start_game(session):
         buqiang = []
         await session.send(message.MessageSegment.text('现在是抢独阶段，如需独保请在群聊中发送「抢独」，否则发送「不抢」'))
         for i in range(5):
-            await bot.send_private_msg(user_id = table.player_id[i], message = message.MessageSegment.text(tile_dict_to_string(table.players[table.player_id[i]].get_tiles())))
+            str1 = tile_dict_to_string(table.players[table.player_id[i]].get_tiles())
+            log.logger.debug(str1)
+            await bot.send_private_msg(user_id = table.player_id[i], message = message.MessageSegment.text(str1))
 
 @on_command('抢独', only_to_me = False, permission = perm.GROUP)
 async def qiangdu(session):
@@ -192,7 +194,9 @@ async def qiangdu(session):
         msg1 = msg1 + message.MessageSegment.text('\n[独保]') + message.MessageSegment.at(qqid) + message.MessageSegment.text('请出牌')
         await session.send(msg1)
         for i in range(5):
-            await bot.send_private_msg(user_id = table.player_id[i], message = message.MessageSegment.text(tile_dict_to_string(table.players[table.player_id[i]].get_tiles())))
+            str1 = tile_dict_to_string(table.players[table.player_id[i]].get_tiles())
+            log.logger.debug(str1)
+            await bot.send_private_msg(user_id = table.player_id[i], message = message.MessageSegment.text(str1))
 
 @on_command('不抢', only_to_me = False, permission = perm.GROUP)
 async def not_qiangdu(session):
@@ -240,8 +244,12 @@ async def rangwei(session):
             await session.send(message.MessageSegment.at(qqid) + message.MessageSegment.text('你没有足够的2，不能让位'))
             return
         await session.send(message.MessageSegment.text('[皇帝]') + message.MessageSegment.at(qqid) + message.MessageSegment.text('让位给了') +  message.MessageSegment.at(table.huangdi_id) + message.MessageSegment.text('，新皇帝如需如需登基请在群聊中发送「登基」，否则发送「让位」\n当前让位所需2：%d' % (table.rangwei2)))
-        await bot.send_private_msg(user_id = qqid, message = message.MessageSegment.text(tile_dict_to_string(table.players[qqid].get_tiles())))
-        await bot.send_private_msg(user_id = table.huangdi_id, message = message.MessageSegment.text(tile_dict_to_string(table.players[table.huangdi_id].get_tiles())))
+        str1 = tile_dict_to_string(table.players[qqid].get_tiles())
+        log.logger.debug(str1)
+        str2 = tile_dict_to_string(table.players[table.huangdi_id].get_tiles())
+        log.logger.debug(str2)
+        await bot.send_private_msg(user_id = qqid, message = message.MessageSegment.text(str1))
+        await bot.send_private_msg(user_id = table.huangdi_id, message = message.MessageSegment.text(str2))
 
 @on_command('明保', only_to_me = False, permission = perm.PRIVATE)
 async def mingbao(session):
@@ -286,9 +294,12 @@ async def wodeshoupai(session):
     if session.current_arg== '' and table != None:
         qqid = int(session.event['user_id'])
         log.logger.debug(str((table.player_id, qqid)))
+        log.logger.debug(str(qqid in table.players_id))
         if not qqid in table.player_id:
             return
-    await session.send(message.MessageSegment.text(tile_dict_to_string(table.players[qqid].get_tiles())))
+    str1 = tile_dict_to_string(table.players[qqid].get_tiles())
+    log.logger.debug(str1)
+    await session.send(message.MessageSegment.text(str1))
 
 
 def ke_to_str(ke:int) -> str:
@@ -373,7 +384,9 @@ async def chupai(session):
         msg1 = msg1 + message.MessageSegment.text('%d号位：[%s]' % (table.players[nxtid].table_id + 1, get_string_identity(table.players[nxtid].get_open_identity()))) + message.MessageSegment.at(nxtid) + message.MessageSegment.text('请出牌')
         table.current_discard = nxtid
         await session.send(msg1)
-        await bot.send_private_msg(user_id = qqid, message = message.MessageSegment.text(tile_dict_to_string(table.players[qqid].get_tiles())))
+        str1 = tile_dict_to_string(table.players[qqid].get_tiles())
+        log.logger.debug(str1)
+        await bot.send_private_msg(user_id = qqid, message = message.MessageSegment.text(str1))
 
 @on_command('过牌', aliases=('过', '要不起', 'pass'), only_to_me = False, permission = perm.GROUP)
 async def guopai(session):
