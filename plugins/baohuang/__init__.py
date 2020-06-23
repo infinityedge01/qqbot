@@ -4,7 +4,7 @@ import datetime
 import re
 from apscheduler.triggers.date import DateTrigger # 一次性触发器
 from nonebot import permission as perm
-from nonebot import on_command, on_request, CommandSession, scheduler
+from nonebot import on_command, on_request, RequestSession, CommandSession, scheduler
 from nonebot import message
 from nonebot import get_bot
 from nonebot import log
@@ -33,7 +33,7 @@ async def close_baohuang(session):
         await session.send(message.MessageSegment.text('保皇功能已关闭'))
 
 @on_request('friend')
-async def _(session: RequestSession):
+async def auto_add_friend(session: RequestSession):
     await session.approve()
 
 @on_command('获取积分', only_to_me = False, permission = perm.GROUP)
