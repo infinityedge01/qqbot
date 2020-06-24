@@ -366,7 +366,9 @@ class Table:
 
     def game_end(self) -> bool:
         if not self.is_game_end(): return False
-        while len(self.win_player) < 5:
+        cnt = 0
+        while cnt < 5:
+            cnt += 1
             if self.players[self.current_discard].get_order() == 0:
                 self.win_player.append(self.current_discard)
                 self.players[self.current_discard].set_order(len(self.win_player))
