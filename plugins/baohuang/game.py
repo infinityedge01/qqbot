@@ -370,5 +370,6 @@ class Table:
             if self.players[self.current_discard].get_order() == 0:
                 self.win_player.append(self.current_discard)
                 self.players[self.current_discard].set_order(len(self.win_player))
+                self.current_discard = self.players[self.current_discard].next_player_id
         self.game_period = 6
         return True
