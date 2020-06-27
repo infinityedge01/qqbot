@@ -86,6 +86,7 @@ class Table:
         self.mutiple = 1
         self.zaofan_player = []
         self.win_player = []
+        self.qipai_player = []
         self.jiefeng = 0
         self.baohuang_win = []
         self.gemingdang_win = []
@@ -351,7 +352,18 @@ class Table:
             self.gemingdang_win.append(paole_id)
         return True
 
+    def qipai(self, qipai_id: int) -> bool:
+        if self.current_discard == qipai_id or self.last_discard == qipai_id:
+            return False
+        if self.players[qipai_id].get_order() != 0:
+            return False
+        self.qipai_player.append(qipai_id)
+        self.players[qipai_id].set_order(6 - len(self.qipai_player))
+        return True
+
     def is_game_end(self) -> bool:
+        if len(self.win_player) + len(self.qipai_player) == 5:
+            return True
         if self.mutiple == 4:
             if len(self.baohuang_win) >= 1 or len(self.gemingdang_win) >= 1:
                 return True
@@ -365,13 +377,23 @@ class Table:
         else: return False
 
     def game_end(self) -> bool:
-        if not self.is_game_end(): return False
+        # if not self.is_game_end(): return False
         cnt = 0
+        for player in self.player_id:
+            if player != self.huangdi_id and player != self.baozi_id:
+                self.players[player].set_identity(GEMINGDANG)
+                self.players[player].set_open_identity(GEMINGDANG)
+            if self.baozi_id == self.huangdi_id:
+                self.players[self.baozi_id].set_identity(DUBAO)
+                self.players[self.baozi_id].set_open_identity(DUBAO)
+            else:
+                self.players[self.baozi_id].set_identity(BAOZI)
+                self.players[self.baozi_id].set_open_identity(BAOZI)
         while cnt < 5:
             cnt += 1
             if self.players[self.current_discard].get_order() == 0:
                 self.win_player.append(self.current_discard)
                 self.players[self.current_discard].set_order(len(self.win_player))
-                self.current_discard = self.players[self.current_discard].next_player_id
+            self.current_discard = self.players[self.current_discard].next_player_id
         self.game_period = 6
         return True

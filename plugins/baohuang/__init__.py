@@ -72,6 +72,15 @@ async def add_points(session):
     db.add_point(qqid, add)
     await session.send(message.MessageSegment.at(qqid) + message.MessageSegment.text('添加成功，当前积分：%d' % (db.get_point(qqid))))
 
+@on_command('设置底分', only_to_me = False, permission = perm.SUPERUSER)
+async def set_basepoint(session):
+    global basepoint
+    match = re.match(r'^ *(\d+)', session.current_arg)
+    if not match:
+        return
+    basepoint = int(match.group(1))
+    await session.send(message.MessageSegment.text('设置成功，当前底分：%d' % (basepoint)))
+
 @on_command('加入游戏', aliases=('上桌'), only_to_me = False, permission = perm.GROUP)
 async def join_game(session):
     global on_table, table, db
@@ -345,6 +354,12 @@ async def game_end():
     await bot.send_group_msg(group_id = table.group_id, message = msg1)
     table = None
 
+@on_command('强行结算', only_to_me = False, permission = perm.SUPERUSER)
+async def qiangxingjiesuan(session):
+    global table
+    if session.current_arg == '' and table != None:
+        game_end()
+
 @on_command('出', only_to_me = False, permission = perm.GROUP)
 async def chupai(session):
     global table
@@ -406,6 +421,21 @@ async def guopai(session):
         table.current_discard = nxtid
         await session.send(msg1)
 
+@on_command('弃牌', only_to_me = False, permission = perm.GROUP)
+async def qipai(session):
+    global table
+    if session.current_arg == '' and session.event.group_id in is_baohuang_open and table != None:
+        qqid = int(session.event['user_id'])
+        if table.game_period != 5: return
+        if qqid == table.current_discard or qqid == table.last_discard: return
+        if not qqid in table.player_id: return
+        if table.players[qqid].get_order() != 0: return
+        table.qipai(qqid)
+        msg1 = message.MessageSegment.at(qqid) + message.MessageSegment.text('弃牌, 位次是[%s]' % (ke_to_str(table.players[qqid].get_order())))
+        await session.send(msg1)
+        if table.is_game_end():
+            await game_end()
+
 @on_command('保皇状态', only_to_me = False, permission = perm.GROUP)
 async def zhuangtai(session):
     global table
@@ -413,7 +443,7 @@ async def zhuangtai(session):
         if table != None:
             msg1 = message.MessageSegment.text('保皇已开始')
             for i in range(5): 
-                msg1 = msg1 + message.MessageSegment.text('\n%d号位：[%s]' % (i + 1, get_string_identity(table.players[table.player_id[i]].get_open_identity()))) + message.MessageSegment.at(table.player_id[i])
+                msg1 = msg1 + message.MessageSegment.text('\n%d号位：[%s]%s' % (i + 1, get_string_identity(table.players[table.player_id[i]].get_open_identity()), ke_to_str(table.players[table.player_id[i]].get_order()))) + message.MessageSegment.at(table.player_id[i])
         else:
             msg1 = message.MessageSegment.text('保皇未开始，当前桌上有%d人' % (len(on_table)))
             for qqid in on_table:
