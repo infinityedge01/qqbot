@@ -362,7 +362,7 @@ class Table:
         return True
 
     def is_game_end(self) -> bool:
-        if len(self.win_player) + len(self.qipai_player) == 5:
+        if len(self.win_player) + len(self.qipai_player) >= 4:
             return True
         if self.mutiple == 4:
             if len(self.baohuang_win) >= 1 or len(self.gemingdang_win) >= 1:
@@ -383,12 +383,12 @@ class Table:
             if player != self.huangdi_id and player != self.baozi_id:
                 self.players[player].set_identity(GEMINGDANG)
                 self.players[player].set_open_identity(GEMINGDANG)
-            if self.baozi_id == self.huangdi_id:
-                self.players[self.baozi_id].set_identity(DUBAO)
-                self.players[self.baozi_id].set_open_identity(DUBAO)
-            else:
-                self.players[self.baozi_id].set_identity(BAOZI)
-                self.players[self.baozi_id].set_open_identity(BAOZI)
+        if self.baozi_id == self.huangdi_id:
+            self.players[self.baozi_id].set_identity(DUBAO)
+            self.players[self.baozi_id].set_open_identity(DUBAO)
+        else:
+            self.players[self.baozi_id].set_identity(BAOZI)
+            self.players[self.baozi_id].set_open_identity(BAOZI)
         while cnt < 5:
             cnt += 1
             if self.players[self.current_discard].get_order() == 0:

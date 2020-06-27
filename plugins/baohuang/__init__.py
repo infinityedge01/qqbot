@@ -348,6 +348,7 @@ async def game_end():
             if player == table.huangdi_id: table.players[player].point = basepoint * table.mutiple * 2 * K
             elif player == table.baozi_id: table.players[player].point = basepoint * table.mutiple * K
             else: table.players[player].point = -basepoint * table.mutiple * K
+    log.logger.debug('%d 游戏结束' % (table.group_id))
     for i in range(5): 
         msg1 = msg1 + message.MessageSegment.text('\n%d号位：[%s]' % (i + 1, get_string_identity(table.players[table.player_id[i]].get_open_identity()))) + message.MessageSegment.at(table.player_id[i]) + message.MessageSegment.text('位次[%s]，得分：%d 点' % (ke_to_str(table.players[table.player_id[i]].get_order()), table.players[table.player_id[i]].point))
         db.add_point(table.player_id[i], table.players[table.player_id[i]].point)
@@ -358,6 +359,7 @@ async def game_end():
 async def qiangxingjiesuan(session):
     global table
     if session.current_arg == '' and table != None:
+        await session.send(message.MessageSegment.text('强行结算'))
         await game_end()
 
 @on_command('出', only_to_me = False, permission = perm.GROUP)
