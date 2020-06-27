@@ -346,7 +346,7 @@ async def game_end():
         K = 6 - table.players[table.huangdi_id].get_order() - table.players[table.baozi_id].get_order()
         for player in table.player_id:
             if player == table.huangdi_id: table.players[player].point = basepoint * table.mutiple * 2 * K
-            if player == table.baozi_id: table.players[player].point = basepoint * table.mutiple * K
+            elif player == table.baozi_id: table.players[player].point = basepoint * table.mutiple * K
             else: table.players[player].point = -basepoint * table.mutiple * K
     for i in range(5): 
         msg1 = msg1 + message.MessageSegment.text('\n%d号位：[%s]' % (i + 1, get_string_identity(table.players[table.player_id[i]].get_open_identity()))) + message.MessageSegment.at(table.player_id[i]) + message.MessageSegment.text('位次[%s]，得分：%d 点' % (ke_to_str(table.players[table.player_id[i]].get_order()), table.players[table.player_id[i]].point))
