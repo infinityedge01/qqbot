@@ -358,7 +358,7 @@ async def game_end():
 async def qiangxingjiesuan(session):
     global table
     if session.current_arg == '' and table != None:
-        game_end()
+        await game_end()
 
 @on_command('出', only_to_me = False, permission = perm.GROUP)
 async def chupai(session):
