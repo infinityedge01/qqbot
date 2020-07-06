@@ -74,7 +74,7 @@ class Database:
         return flag
     def get_qian(self, qqid: int) -> int:
         db_conn = sqlite3.connect(os.path.join(
-            self.db_path, "baohuang.db"))
+            self.db_path, "qiuqian.db"))
         self.db = db_conn.cursor()
         sql_info = list(self.db.execute(
             "SELECT qqid, points, last_day FROM Data WHERE qqid=?", (qqid,)))
