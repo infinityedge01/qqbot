@@ -18,7 +18,7 @@ async def open_qiuqian(session):
         is_qiuqian_open = True
         await session.send(message.MessageSegment.text('求签功能已开启'))
 
-@on_command('开启求签', only_to_me = False, permission = perm.SUPERUSER)
+@on_command('关闭求签', only_to_me = False, permission = perm.SUPERUSER)
 async def close_qiuqian(session):
     if session.current_arg == '':
         global is_qiuqian_open
