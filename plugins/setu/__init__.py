@@ -39,7 +39,7 @@ async def setu(session: CommandSession):
             msg_data = await session.send(msg1)
             log.logger.debug(str(msg_data['message_id']))
             # 制作一个“10秒钟后”触发器
-            delta = datetime.timedelta(seconds=10)
+            delta = datetime.timedelta(seconds=20)
             trigger = DateTrigger(
                 run_date=datetime.datetime.now() + delta
             )
