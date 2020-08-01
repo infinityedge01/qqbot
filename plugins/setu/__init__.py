@@ -49,7 +49,7 @@ async def setu(session: CommandSession):
                 kwargs={'message_id':msg_data['message_id'], 'self_id':session.event.self_id},  # 函数的参数列表，注意：只有一个值时，不能省略末尾的逗号
                 # kwargs=None,
                 misfire_grace_time=1,  # 允许的误差时间，建议不要省略
-                # jobstore='default',  # 任务储存库，在下一小节中说明
+                # jobstore='default',  # 任务储存库
             )
          #   await asyncio.sleep(10)
          #   await bot.delete_msg(message_id = msg_data['message_id'], self_id = session.event.self_id)
