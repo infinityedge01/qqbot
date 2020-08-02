@@ -44,6 +44,5 @@ async def setu(session: CommandSession):
             else:
                 msg0 = msg0 + message.MessageSegment.text('今天你已经求过签了\n')
             msg1 = message.MessageSegment.text(str1)
-            system('cp -f %s %s' % (path.join(sys.path[0], 'plugins/qiuqian/image/%d.jpg' % (qian)), path.join('/root/coolq/data/image', '%d.jpg' % (qian))))
-            msg2 = message.MessageSegment.image('%d.jpg' % (qian))
+            msg2 = message.MessageSegment.image(path.join(sys.path[0], 'plugins/qiuqian/image/%d.jpg' % (qian)))
             await session.send(msg0 + msg1 + msg2)
