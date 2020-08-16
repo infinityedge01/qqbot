@@ -1,7 +1,10 @@
 from os import path
 import asyncio
 import datetime
+import pytz
+import re
 from apscheduler.triggers.date import DateTrigger # 一次性触发器
+from aiocqhttp.exceptions import Error as CQHttpError
 from nonebot import permission as perm
 from nonebot import on_command, CommandSession, scheduler
 from nonebot import message
@@ -9,6 +12,11 @@ from nonebot import get_bot
 from nonebot import log
 from .get_setu import *
 is_setu_open = False
+setu_send_groupid = 1042285895
+setu_scheduled_open = None
+setu_scheduled_close = None
+setu_scheduled_open_time = None
+setu_scheduled_close_time = None
 
 @on_command('开启色图', aliases=('开启涩图'), only_to_me = False, permission = perm.SUPERUSER)
 async def open_setu(session):
@@ -17,12 +25,101 @@ async def open_setu(session):
         is_setu_open = True
         await session.send(message.MessageSegment.text('涩图已开启'))
 
+async def open_setu_scheduled():
+    bot = get_bot()
+    global is_setu_open
+    is_setu_open = True
+    msg = message.MessageSegment.text('涩图已开启')
+    try:
+        await bot.send_group_msg(group_id=setu_send_groupid, message=msg)
+    except CQHttpError:
+        pass
+
+async def close_setu_scheduled():
+    bot = get_bot()
+    global is_setu_open
+    is_setu_open = False
+    msg = message.MessageSegment.text('涩图已关闭')
+    try:
+        await bot.send_group_msg(group_id=setu_send_groupid, message=msg)
+    except CQHttpError:
+        pass
+
 @on_command('关闭色图', aliases=('关闭涩图'), only_to_me = False, permission = perm.SUPERUSER)
 async def close_setu(session):
     if session.current_arg == '':
         global is_setu_open
         is_setu_open = False
         await session.send(message.MessageSegment.text('涩图已关闭'))
+
+@on_command('色图开启时间', aliases=('涩图开启时间'), only_to_me = False, permission = perm.SUPERUSER)
+async def set_open_setu_time(session):
+    match = re.match(r'^(\d+):(\d+)', session.current_arg)
+    if not match:
+        return
+    hour = int(match.group(1))
+    minute = int(match.group(2))
+    if hour < 0 or hour > 23 or minute < 0 or minute > 59:
+        await session.send(message.MessageSegment.text('输入错误'))
+        return
+    global setu_scheduled_open
+    global setu_scheduled_open_time
+    setu_scheduled_open_time = (hour, minute)
+    if setu_scheduled_open != None:
+        scheduler.remove_job(setu_scheduled_open)
+
+    setu_scheduled_open = scheduler.add_job(open_setu_scheduled, 'cron', hour = hour, minute = minute)
+    await session.send(message.MessageSegment.text('设置成功，当前涩图每日开启时间为：{}时{}分'.format(hour, minute)))
+    
+@on_command('色图关闭时间', aliases=('涩图关闭时间'), only_to_me = False, permission = perm.SUPERUSER)
+async def set_close_setu_time(session):
+    match = re.match(r'^(\d+):(\d+)', session.current_arg)
+    if not match:
+        return
+    hour = int(match.group(1))
+    minute = int(match.group(2))
+    if hour < 0 or hour > 23 or minute < 0 or minute > 59:
+        await session.send(message.MessageSegment.text('输入错误'))
+        return
+    global setu_scheduled_close
+    global setu_scheduled_close_time
+    setu_scheduled_close_time = (hour, minute)
+    if setu_scheduled_close != None:
+        scheduler.remove_job(setu_scheduled_close)
+
+    setu_scheduled_close = scheduler.add_job(close_setu_scheduled, 'cron', hour = hour, minute = minute)
+    await session.send(message.MessageSegment.text('设置成功，当前涩图每日关闭时间为：{}:{}'.format(hour, minute)))
+
+@on_command('清除色图定时', aliases=('清除涩图定时'), only_to_me = False, permission = perm.SUPERUSER)
+async def clear_setu_schedule(session):
+    if session.current_arg == '':
+        global setu_scheduled_open
+        global setu_scheduled_open_time
+        global setu_scheduled_close
+        global setu_scheduled_close_time
+        if setu_scheduled_open != None:
+            scheduler.remove_job(setu_scheduled_open)
+        if setu_scheduled_close != None:
+            scheduler.remove_job(setu_scheduled_close)
+        setu_scheduled_open_time = None
+        setu_scheduled_close_time = None
+        await session.send(message.MessageSegment.text('清除成功'))
+
+@on_command('查看色图定时', aliases=('查看涩图定时'), only_to_me = False, permission = perm.SUPERUSER)
+async def get_setu_schedule(session):
+    if session.current_arg == '':
+        global setu_scheduled_open_time
+        global setu_scheduled_close_time
+        msg = message.MessageSegment.text('涩图开启时间为：')
+        if setu_scheduled_open_time == None:
+            msg = msg + message.MessageSegment.text('未设置\n')
+        else:
+            msg = msg + message.MessageSegment.text('{}:{}\n'.format(setu_scheduled_open_time[0], setu_scheduled_open_time[1]))
+        msg = msg + message.MessageSegment.text('涩图关闭时间为：')
+        if setu_scheduled_close_time == None:
+            msg = msg + message.MessageSegment.text('未设置\n')
+        else:
+            msg = msg + message.MessageSegment.text('{}:{}\n'.format(setu_scheduled_close_time[0], setu_scheduled_close_time[1]))
 
 @on_command('色图', aliases=('涩图'), only_to_me = False)
 async def setu(session: CommandSession):
