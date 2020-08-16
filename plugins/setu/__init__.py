@@ -120,6 +120,7 @@ async def get_setu_schedule(session):
             msg = msg + message.MessageSegment.text('未设置\n')
         else:
             msg = msg + message.MessageSegment.text('{}:{}\n'.format(setu_scheduled_close_time[0], setu_scheduled_close_time[1]))
+        await session.send(msg)
 
 @on_command('色图', aliases=('涩图'), only_to_me = False)
 async def setu(session: CommandSession):
