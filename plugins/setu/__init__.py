@@ -111,7 +111,7 @@ async def clear_setu_schedule(session):
         setu_scheduled_close_time = None
         await session.send(message.MessageSegment.text('清除成功'))
 
-@on_command('查看色图定时', aliases=('查看涩图定时'), only_to_me = False, permission = perm.SUPERUSER)
+@on_command('查看色图定时', aliases=('查看涩图定时'), only_to_me = False)
 async def get_setu_schedule(session):
     if session.current_arg == '':
         global setu_scheduled_open_time
