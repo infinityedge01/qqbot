@@ -67,8 +67,10 @@ async def set_open_setu_time(session):
     setu_scheduled_open_time = (hour, minute)
     if setu_scheduled_open != None:
         scheduler.remove_job(setu_scheduled_open)
+        setu_scheduled_open = None
 
-    setu_scheduled_open = scheduler.add_job(open_setu_scheduled, 'cron', hour = hour, minute = minute)
+    scheduler.add_job(open_setu_scheduled, 'cron', hour = hour, minute = minute, id = 'setu_open')
+    setu_scheduled_open = 'setu_open'
     await session.send(message.MessageSegment.text('设置成功，当前涩图每日开启时间为：{}:{}'.format(str(hour).zfill(2), str(minute).zfill(2))))
     
 @on_command('色图关闭时间', aliases=('涩图关闭时间'), only_to_me = False, permission = perm.SUPERUSER)
@@ -86,8 +88,10 @@ async def set_close_setu_time(session):
     setu_scheduled_close_time = (hour, minute)
     if setu_scheduled_close != None:
         scheduler.remove_job(setu_scheduled_close)
+        setu_scheduled_close = None
 
-    setu_scheduled_close = scheduler.add_job(close_setu_scheduled, 'cron', hour = hour, minute = minute)
+    scheduler.add_job(close_setu_scheduled, 'cron', hour = hour, minute = minute, id = 'setu_close')
+    setu_scheduled_close = 'setu_close'
     await session.send(message.MessageSegment.text('设置成功，当前涩图每日关闭时间为：{}:{}'.format(str(hour).zfill(2), str(minute).zfill(2))))
 
 @on_command('清除色图定时', aliases=('清除涩图定时'), only_to_me = False, permission = perm.SUPERUSER)
@@ -99,8 +103,10 @@ async def clear_setu_schedule(session):
         global setu_scheduled_close_time
         if setu_scheduled_open != None:
             scheduler.remove_job(setu_scheduled_open)
+            setu_scheduled_open = None
         if setu_scheduled_close != None:
             scheduler.remove_job(setu_scheduled_close)
+            setu_scheduled_close = None
         setu_scheduled_open_time = None
         setu_scheduled_close_time = None
         await session.send(message.MessageSegment.text('清除成功'))
