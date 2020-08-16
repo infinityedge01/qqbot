@@ -69,7 +69,7 @@ async def set_open_setu_time(session):
         scheduler.remove_job(setu_scheduled_open)
 
     setu_scheduled_open = scheduler.add_job(open_setu_scheduled, 'cron', hour = hour, minute = minute)
-    await session.send(message.MessageSegment.text('设置成功，当前涩图每日开启时间为：{}时{}分'.format(hour, minute)))
+    await session.send(message.MessageSegment.text('设置成功，当前涩图每日开启时间为：{}:{}'.format(str(hour).zfill(2), str(minute).zfill(2))))
     
 @on_command('色图关闭时间', aliases=('涩图关闭时间'), only_to_me = False, permission = perm.SUPERUSER)
 async def set_close_setu_time(session):
@@ -88,7 +88,7 @@ async def set_close_setu_time(session):
         scheduler.remove_job(setu_scheduled_close)
 
     setu_scheduled_close = scheduler.add_job(close_setu_scheduled, 'cron', hour = hour, minute = minute)
-    await session.send(message.MessageSegment.text('设置成功，当前涩图每日关闭时间为：{}:{}'.format(hour, minute)))
+    await session.send(message.MessageSegment.text('设置成功，当前涩图每日关闭时间为：{}:{}'.format(str(hour).zfill(2), str(minute).zfill(2))))
 
 @on_command('清除色图定时', aliases=('清除涩图定时'), only_to_me = False, permission = perm.SUPERUSER)
 async def clear_setu_schedule(session):
@@ -114,12 +114,12 @@ async def get_setu_schedule(session):
         if setu_scheduled_open_time == None:
             msg = msg + message.MessageSegment.text('未设置\n')
         else:
-            msg = msg + message.MessageSegment.text('{}:{}\n'.format(setu_scheduled_open_time[0], setu_scheduled_open_time[1]))
+            msg = msg + message.MessageSegment.text('{}:{}\n'.format(str(setu_scheduled_open_time[0]).zfill(2), str(setu_scheduled_open_time[1]).zfill(2)))
         msg = msg + message.MessageSegment.text('涩图关闭时间为：')
         if setu_scheduled_close_time == None:
             msg = msg + message.MessageSegment.text('未设置')
         else:
-            msg = msg + message.MessageSegment.text('{}:{}'.format(setu_scheduled_close_time[0], setu_scheduled_close_time[1]))
+            msg = msg + message.MessageSegment.text('{}:{}'.format(str(setu_scheduled_close_time[0]).zfill(2), str(setu_scheduled_close_time[1]).zfill(2)))
         await session.send(msg)
 
 @on_command('色图', aliases=('涩图'), only_to_me = False)
