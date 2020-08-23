@@ -64,7 +64,7 @@ async def push_score_line_scheduled():
     msg_str = get_score_line()
     bot = get_bot()
     try:
-        await bot.send_group_msg(group_id=1038672908, message=message.MessageSegment.text(msg_str))
+        await bot.send_group_msg(group_id=1038672908, message=message.MessageSegment.text("截至今天早上05:05的档线：") + message.MessageSegment.text(msg_str))
     except CQHttpError:
         pass
 
