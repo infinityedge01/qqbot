@@ -31,7 +31,7 @@ async def query_by_rank(session):
     msg_str = Clan.rank_to_string(Clan.get_rank_status(rank), long_info = True)
     await session.send(message.MessageSegment.text(msg_str))
 
-async def get_score_line():
+def get_score_line():
     global Clan
     msg_str = ''
     msg_str += Clan.rank_to_string(Clan.get_rank_status(1), long_info = False)
