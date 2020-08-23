@@ -40,7 +40,7 @@ class ClanBattle:
         return temp['period_ranking']
 
     async def get_rank_status(self, rank):
-        temp1 = await self.get_page_status((rank - 1) // 10)
+        temp1 = self.get_page_status((rank - 1) // 10)
         if (rank - 1) % 10 >= len(temp1):
             temp = temp1[(rank - 1) % 10]
         else: temp = {}

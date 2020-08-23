@@ -27,29 +27,29 @@ async def query_by_rank(session):
     if rank <= 0 or rank >= 15000:
         await session.send(message.MessageSegment.text('输入错误'))
         return
-    msg_str = await Clan.rank_to_string(Clan.get_rank_status(rank), long_info = True)
+    msg_str = Clan.rank_to_string(Clan.get_rank_status(rank), long_info = True)
     await session.send(message.MessageSegment.text(msg_str))
 
 async def get_score_line():
     global Clan
     msg_str = ''
-    msg_str += await Clan.rank_to_string(Clan.get_rank_status(1), long_info = False)
+    msg_str += Clan.rank_to_string(Clan.get_rank_status(1), long_info = False)
     msg_str += '\n'
-    msg_str += await Clan.rank_to_string(Clan.get_rank_status(2), long_info = False)
+    msg_str += Clan.rank_to_string(Clan.get_rank_status(2), long_info = False)
     msg_str += '\n'
-    msg_str += await Clan.rank_to_string(Clan.get_rank_status(3), long_info = False)
+    msg_str += Clan.rank_to_string(Clan.get_rank_status(3), long_info = False)
     msg_str += '\n'
-    msg_str += await Clan.rank_to_string(Clan.get_rank_status(20), long_info = False)
+    msg_str += Clan.rank_to_string(Clan.get_rank_status(20), long_info = False)
     msg_str += '\n'
-    msg_str += await Clan.rank_to_string(Clan.get_rank_status(50), long_info = False)
+    msg_str += Clan.rank_to_string(Clan.get_rank_status(50), long_info = False)
     msg_str += '\n'
-    msg_str += await Clan.rank_to_string(Clan.get_rank_status(150), long_info = False)
+    msg_str += Clan.rank_to_string(Clan.get_rank_status(150), long_info = False)
     msg_str += '\n'
-    msg_str += await Clan.rank_to_string(Clan.get_rank_status(300), long_info = False)
+    msg_str += Clan.rank_to_string(Clan.get_rank_status(300), long_info = False)
     msg_str += '\n'
-    msg_str += await Clan.rank_to_string(Clan.get_rank_status(700), long_info = False)
+    msg_str += Clan.rank_to_string(Clan.get_rank_status(700), long_info = False)
     msg_str += '\n'
-    msg_str += await Clan.rank_to_string(Clan.get_rank_status(1300), long_info = False)
+    msg_str += Clan.rank_to_string(Clan.get_rank_status(1300), long_info = False)
     return msg_str
 
 @on_command('查档线', only_to_me = False)
