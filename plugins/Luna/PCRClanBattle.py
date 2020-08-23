@@ -32,14 +32,14 @@ class ClanBattle:
         self.Client.login(uid, access_key)
         self.clan_id = 6770
     
-    async def get_page_status(self, page):
+    def get_page_status(self, page):
         temp = self.Client.Callapi('clan_battle/period_ranking', {'clan_id': 6770, 'clan_battle_id': -1, 'period': -1, 'month': 0, 'page': page, 'is_my_clan': 0, 'is_first': 1})
         if 'period_ranking' not in temp:
             self.Client.login(self.uid, self.access_key)
             temp = self.Client.Callapi('clan_battle/period_ranking', {'clan_id': 6770, 'clan_battle_id': -1, 'period': -1, 'month': 0, 'page': page, 'is_my_clan': 0, 'is_first': 1})
         return temp['period_ranking']
 
-    async def get_rank_status(self, rank):
+    def get_rank_status(self, rank):
         temp1 = self.get_page_status((rank - 1) // 10)
         if (rank - 1) % 10 >= len(temp1):
             temp = temp1[(rank - 1) % 10]
