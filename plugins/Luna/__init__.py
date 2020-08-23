@@ -71,14 +71,18 @@ async def push_score_line_scheduled():
 
 @on_command('开启推送档线', only_to_me = False, permission = perm.SUPERUSER)
 async def set_open_score_line(session):
-    if session.current_arg == '':
-        global Push_Score_Lines
-        if Push_Score_Lines != None:
-            scheduler.remove_job(Push_Score_Lines)
-            Push_Score_Lines = None
-        scheduler.add_job(push_score_line_scheduled, 'cron', hour = 5, minute = 5, id = 'score_lines_open')
-        Push_Score_Lines = 'score_lines_open'
-        await session.send(message.MessageSegment.text('每日05:05会自动推送当前档线'))
+    match = re.match(r'^(\d+):(\d+)', session.current_arg)
+    if not match:
+        return
+    hour = int(match.group(1))
+    minute = int(match.group(2))
+    global Push_Score_Lines
+    if Push_Score_Lines != None:
+        scheduler.remove_job(Push_Score_Lines)
+        Push_Score_Lines = None
+    scheduler.add_job(push_score_line_scheduled, 'cron', hour = hour, minute = minute, id = 'score_lines_open')
+    Push_Score_Lines = 'score_lines_open'
+    await session.send(message.MessageSegment.text('每日{}:{}会自动推送当前档线'.format(str(hour).zfill(2), str(minute).zfill(2))))
 
 @on_command('关闭推送档线', only_to_me = False, permission = perm.SUPERUSER)
 async def set_close_score_line(session):
