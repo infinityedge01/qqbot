@@ -27,6 +27,7 @@ async def query_by_rank(session):
     if rank <= 0 or rank >= 15000:
         await session.send(message.MessageSegment.text('输入错误'))
         return
+    log.logger.debug(str(rank))
     msg_str = Clan.rank_to_string(Clan.get_rank_status(rank), long_info = True)
     await session.send(message.MessageSegment.text(msg_str))
 
