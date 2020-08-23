@@ -4,6 +4,7 @@ import ast
 import hashlib
 import base64
 import random
+from nonebot import log
 class PCRClient:
     def __init__(self, viewer_id):
         self.viewer_id = viewer_id
@@ -67,13 +68,15 @@ class PCRClient:
     def login(self, uid, access_key):
         self.manifest = self.Callapi('source_ini/get_maintenance_status', {}, False)
         ver = self.manifest["required_manifest_ver"]
+        log.logger.debug(str(self.manifest))
         self.default_headers["MANIFEST-VER"] = ver
-        self.Callapi('tool/sdk_login', {"uid": uid, "access_key" : access_key, "platform" : self.default_headers["PLATFORM-ID"], "channel_id" : self.default_headers["CHANNEL-ID"]})
+        log.logger.debug(str(self.Callapi('tool/sdk_login', {"uid": uid, "access_key" : access_key, "platform" : self.default_headers["PLATFORM-ID"], "channel_id" : self.default_headers["CHANNEL-ID"]}) ))
 
-        self.Callapi('check/game_start', {"app_type": 0, "campaign_data" : "", "campaign_user": random.randint(1, 1000000)})
-        self.Callapi("check/check_agreement", {})
+        log.logger.debug(str(self.Callapi('check/game_start', {"app_type": 0, "campaign_data" : "", "campaign_user": random.randint(1, 1000000)}) ))
+        log.logger.debug(str(self.Callapi("check/check_agreement", {}) ))
         self.Callapi("load/index", {"carrier": "HUAWEI"})
         self.Home = self.Callapi("home/index", {'message_id': 1, 'tips_id_list': [], 'is_first': 1, 'gold_history': 0})
+        log.logger.debug(str(self.Home))
 
 
 

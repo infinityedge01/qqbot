@@ -4,6 +4,7 @@ import hashlib
 import base64
 import random
 from .PCRClient import PCRClient
+from nonebot import log
 BOSS_LIFE_LIST = [6000000, 8000000, 10000000, 12000000, 20000000]
 BOSS_SCORE_MUTIPILE = [[1.0, 1.0, 1.1, 1.1, 1.2], [1.2, 1.2, 1.5, 1.7, 2.0]]
 LAP_UPGRADE = [2]
@@ -44,6 +45,7 @@ class ClanBattle:
         if (rank - 1) % 10 >= len(temp1):
             temp = temp1[(rank - 1) % 10]
         else: temp = {}
+        log.logger.debug(str(temp))
         if 'rank' not in temp:
             temp['rank'] = -1
         if 'damage' not in temp:
