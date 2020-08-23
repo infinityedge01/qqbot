@@ -35,6 +35,7 @@ class ClanBattle:
     
     def get_page_status(self, page):
         temp = self.Client.Callapi('clan_battle/period_ranking', {'clan_id': 6770, 'clan_battle_id': -1, 'period': -1, 'month': 0, 'page': page, 'is_my_clan': 0, 'is_first': 1})
+        log.logger.debug(str(temp))
         if 'period_ranking' not in temp:
             self.Client.login(self.uid, self.access_key)
             temp = self.Client.Callapi('clan_battle/period_ranking', {'clan_id': 6770, 'clan_battle_id': -1, 'period': -1, 'month': 0, 'page': page, 'is_my_clan': 0, 'is_first': 1})
