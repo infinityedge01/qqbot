@@ -25,6 +25,21 @@ def boss_status(score):
             if ptr == 0:
                 if lap >= LAP_UPGRADE[ptr]: ptr += 1
 
+def process_data(temp):
+    if 'rank' not in temp:
+        temp['rank'] = -1
+    if 'damage' not in temp:
+        temp['damage'] = 0
+    if 'clan_name' not in temp:
+        temp['clan_name'] = '此行会已解散'
+    if 'member_num' not in temp:
+        temp['member_num'] = 0
+    if 'leader_name' not in temp:
+        temp['leader_name'] = 'unknown'
+    if 'grade_rank' not in temp:
+        temp['grade_rank'] = 0
+    return temp
+
 class ClanBattle:
     def __init__(self, viewer_id, uid, access_key):
         self.uid = uid
@@ -46,21 +61,16 @@ class ClanBattle:
             temp = temp1[(rank - 1) % 10]
         else: temp = {}
         log.logger.debug(str(temp))
-        if 'rank' not in temp:
-            temp['rank'] = -1
-        if 'damage' not in temp:
-            temp['damage'] = 0
-        if 'clan_name' not in temp:
-            temp['clan_name'] = '此行会已解散'
-        if 'member_num' not in temp:
-            temp['member_num'] = 0
-        if 'leader_name' not in temp:
-            temp['leader_name'] = 'unknown'
-        if 'grade_rank' not in temp:
-            temp['grade_rank'] = 0
-        
-        return temp
+        return process_data(temp)
     
+    def get_page_data(self, page):
+        temp1 = self.get_page_status(page)
+        for i in range(0, len(temp1)):
+            lap, boss_id, remain = boss_status(temp1[i]['damage'])
+            temp1[i]['lap'] = lap
+            temp1[i]['boss_id'] = boss_id
+            temp1[i]['remain'] = remain
+        return temp1
 
     def rank_to_string(self, status, long_info = False):
         lap, boss_id, remaining = boss_status(status['damage'])
