@@ -5,3 +5,4 @@ plugins/baohuang/*.db
 __pycache__
 log.txt
 *.csv
+.vscode
