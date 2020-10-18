@@ -34,7 +34,7 @@ async def tex2img(session):
 	process_data={
 		'eq_latex':tex,
 		'eq_bkcolor':'Transparent',
-		'eq_font_family':'arev',
+		'eq_font_family':'modern',
 		'eq_font':'78',
 		'eq_imformat':'JPG',
  	}
