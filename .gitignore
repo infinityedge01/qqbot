@@ -6,3 +6,4 @@ __pycache__
 log.txt
 *.csv
 .vscode
+plugins/tex2img/tex.png
