@@ -48,5 +48,5 @@ async def tex2img(session):
 	if png_html.status_code == 200:
 		with open('plugins/tex2img/tex.png','wb') as pngfile:
 			pngfile.write(png_html.content)
-		await session.send(message.MessageSegment.image('plugins/tex2img/tex.png'))
+		await session.send(message.MessageSegment.image(path.join(sys.path[0], 'plugins/tex2img/tex.png')))
 
