@@ -45,5 +45,9 @@ async def tex2img(session):
 	num=re.findall(r'Tex2Img_(.*?)/render.png',r.text)
 	png_url='http://www.sciweavers.org/upload/Tex2Img_'+num[0]+'/render.png'
 	msg1 = message.MessageSegment.image(png_url)
-	await session.send(msg1)
+	png_html=requests.get(png_url)
+	if png_html.status_code == 200:
+		with open('plugins/tex2img/tex.png','wb') as pngfile:
+			pngfile.write(png_html.content)
+		await message.MessageSegment.image('plugins/tex2img/tex.png')
 
