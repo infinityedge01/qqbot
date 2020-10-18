@@ -30,7 +30,7 @@ process_url='http://www.sciweavers.org/process_form_tex2img'
 
 @on_command('tex', aliases=('latex'), only_to_me = False, permission = perm.SUPERUSER)
 async def tex2img(session):
-	tex = session.current_arg
+	tex = message.unescape(session.current_arg)
 	process_data={
 		'eq_latex':tex,
 		'eq_bkcolor':'Transparent',
