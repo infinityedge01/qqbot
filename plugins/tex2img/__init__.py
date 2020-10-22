@@ -1,53 +1,47 @@
 from os import path
+import os
 import asyncio
 import datetime
 import pytz
 import re
 import sys
+import cairosvg
 import requests
+import numpy as np
+import urllib
+from PIL import Image
 from nonebot import permission as perm
 from nonebot import on_command, CommandSession, scheduler
 from nonebot import message
 from nonebot import get_bot
 from nonebot import log
 
-process_headers={
-	'Accept': '*/*',
-	'Accept-Encoding': 'gzip, deflate',
-	'Accept-Language': 'zh-CN,zh;q=09',
-	'Connection': 'keep-alive',
-	'Content-Length': '115',
-	'Content-Type': 'application/x-www-form-urlencoded',
-	'Cookie': 'SESS47e98711e78f022e99badf62c8eee3e1=6ff84116dbe3e8be858cdad9f5439cd8; __utmc=46573605; __utmz=46573605152967690911utmcsr=(direct)|utmccn=(direct)|utmcmd=(none); __utma=46573605794010901529676548152967654815296790882; __utmt=1; __utmb=465736052101529679088',
-	'Host': 'wwwsciweaversorg',
-	'Origin': 'http://wwwsciweaversorg',
-	'Referer': 'http://wwwsciweaversorg/free-online-latex-equation-editor',
-	'User-Agent': 'Mozilla/50 (Windows NT 100; Win64; x64) AppleWebKit/53736 (KHTML, like Gecko) Chrome/670339687 Safari/53736',
-	'X-Requested-With': 'XMLHttpRequest',
-}
+process_url= 'https://www.zhihu.com/equation?tex='
 
-process_url='http://www.sciweavers.org/process_form_tex2img'
+def transparence2white(image):
+	x = np.array(image)
+	r, g, b, a = np.rollaxis(x, axis=-1)
+	r[a == 0] = 255
+	g[a == 0] = 255
+	b[a == 0] = 255
+	x = np.dstack([r, g, b])
+	return Image.fromarray(x, 'RGB')
 
-@on_command('tex', aliases=('latex'), only_to_me = False, permission = perm.SUPERUSER)
+@on_command('tex', aliases=('latex'), only_to_me = False, permission = perm.GROUP)
 async def tex2img(session):
-	tex = message.unescape(session.current_arg)
-	process_data={
-		'eq_latex':tex,
-		'eq_bkcolor':'Transparent',
-		'eq_font_family':'modern',
-		'eq_font':'78',
-		'eq_imformat':'JPG',
- 	}
-	r = requests.post(process_url, headers = process_headers, data = process_data)
-	if r.status_code != 200:
-		await session.send(message.MessageSegment.text('HTTP ERROR {}'.format(r.status_code)))
-	
-	num=re.findall(r'Tex2Img_(.*?)/render.png',r.text)
-	png_url='http://www.sciweavers.org/upload/Tex2Img_'+num[0]+'/render.png'
-	png_html=requests.get(png_url)
-	if png_html.status_code == 200:
-		with open('plugins/tex2img/tex.png','wb') as pngfile:
-			pngfile.write(png_html.content)
-			pngfile.close()
-		await session.send(message.MessageSegment.image('/root/bot/plugins/tex2img/tex.png'))
+	tex = message.unescape(session.current_arg).replace('\n', '')
+	png_file = '/root/bot/plugins/tex2img/tex.png'
+	svg_file = '/root/bot/plugins/tex2img/tex.svg'
+	os.system('curl ' + process_url + urllib.parse.quote(tex) + ' > ' + svg_file)
+	svg = open(svg_file, "r")
+	st = svg.read();
+	svg.close();
+	svg = open(svg_file, "w")
+	svg.write(st.replace('text font-family=\"monospace\"', 'text font-family=\"Sarasa Mono SC Nerd, Segoe UI Emoji\"'))
+	svg.close();
+	cairosvg.svg2png(url= svg_file, write_to=png_file, dpi = 480)
+	img=Image.open(png_file)
+	img=transparence2white(img)
+	img.save(png_file)
+	await session.send(message.MessageSegment.image(png_file))
 
