@@ -34,6 +34,11 @@ def Check_Baidu(imgurl, imgname):
     censor_client = AipContentCensor(censor_APP_ID, censor_API_KEY, censor_SECRET_KEY)
     censor_result = censor_client.imageCensorUserDefined(imgurl)
     if 'data' in censor_result:
+        s = ''
+        for each in censor_result['data']:
+            s = s + each['msg'] + str(each['probability']) + ' '
+        
+        nonebot.log.logger.debug(s)
         for each in censor_result['data']:
             #print('type', each['type'], 'prob', each['probability'])
             if each['msg']=='存在卡通色情不合规' and each['probability']>0.25:

@@ -25,6 +25,13 @@ async def close_qiuqian(session):
         is_qiuqian_open = False
         await session.send(message.MessageSegment.text('求签功能已关闭'))
 
+@on_command('清空求签', only_to_me = False, permission = perm.SUPERUSER)
+async def open_qiuqian(session):
+    if session.current_arg == '':
+        os.system('rm qiuqian.db')
+        db = Database(sys.path[0])
+        await session.send(message.MessageSegment.text('求签已清空'))
+
 @on_command('求签', aliases=('求籤'), only_to_me = False)
 async def setu(session: CommandSession):
     if session.current_arg == '':
@@ -42,7 +49,9 @@ async def setu(session: CommandSession):
             if Flag:
                 msg0 = msg0 + message.MessageSegment.text('\n')
             else:
-                msg0 = msg0 + message.MessageSegment.text('今天你已经求过签了\n')
+                msg0 = msg0 + message.MessageSegment.text('今天你已经求过签了 \n')
             msg1 = message.MessageSegment.text(str1)
             msg2 = message.MessageSegment.image(path.join(sys.path[0], 'plugins/qiuqian/image/%d.jpg' % (qian)))
-            await session.send(msg0 + msg1 + msg2)
+            await session.send(msg0 + msg1)
+            await session.send(msg2)
+            
