@@ -2,6 +2,10 @@ from os import path, listdir, system
 import asyncio
 import datetime
 import random
+from PIL import Image,ImageFont,ImageDraw
+import textwrap
+import os
+import sys
 from nonebot import permission as perm
 from nonebot import on_command, CommandSession, scheduler
 from nonebot import message
@@ -32,6 +36,27 @@ async def open_qiuqian(session):
         db = Database(sys.path[0])
         await session.send(message.MessageSegment.text('求签已清空'))
 
+def get_qian_img(qian:int):
+    qianwen = open(path.join(sys.path[0], 'plugins/qiuqian/word/%d.txt' % (qian)))
+    text = qianwen.read()
+    text_lst = text.split("\n")
+    text = ""
+    line_count = 0
+    for s in text_lst:
+        l1 = textwrap.wrap(s, width= 20)
+        for s1 in l1:
+            text = text + s1 + "\n"
+            line_count += 1
+    qian_img = Image.open("plugins/qiuqian/image/%d.jpg" % (qian))
+    qian_img = qian_img.resize((800, 1125))
+    base_img = Image.new("RGB", (850, 1125 + line_count * 45), (255, 255, 255))
+    dr = ImageDraw.Draw(base_img)
+    font = ImageFont.truetype("plugins/qiuqian/SourceHanSansCN-Normal.ttf", 40)
+    dr.text((10, 10), text, font=font, fill="#000000", spacing=8)
+    base_img.paste(qian_img, [25, line_count * 45])
+    base_img.show()
+    base_img.save('plugins/qiuqian/output.jpg') # 保存
+
 @on_command('求签', aliases=('求籤'), only_to_me = False)
 async def setu(session: CommandSession):
     if session.current_arg == '':
@@ -43,15 +68,12 @@ async def setu(session: CommandSession):
                 qian = random.randint(1, 100)
                 db.change_qian(qqid, qian)
             else: qian = db.get_qian(qqid)
-            qianwen = open(path.join(sys.path[0], 'plugins/qiuqian/word/%d.txt' % (qian)))
-            str1 = qianwen.read()
             msg0 = message.MessageSegment.at(qqid)
             if Flag:
                 msg0 = msg0 + message.MessageSegment.text('\n')
             else:
                 msg0 = msg0 + message.MessageSegment.text('今天你已经求过签了 \n')
-            msg1 = message.MessageSegment.text(str1)
-            msg2 = message.MessageSegment.image(path.join(sys.path[0], 'plugins/qiuqian/image/%d.jpg' % (qian)))
+            get_qian_img(qian)
+            msg1 = message.MessageSegment.image(os.path.join(sys.path[0], "plugins/qiuqian/output.jpg"))
             await session.send(msg0 + msg1)
-            await session.send(msg2)
             
